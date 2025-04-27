@@ -1,14 +1,18 @@
 import Image from "next/image";
-import { CommentWithAuthor } from "@/db/queries/comments";
+import { fetchCommentsByPostId } from "@/db/queries/comments";
 import CommentCreateForm from "./CommentCreateForm";
 
 interface CommentShowProps {
   commentId: string;
-  comments: CommentWithAuthor[];
+  postId: string;
 }
 
 // TODO: Get a list of comments
-export default function CommentShow({ commentId, comments }: CommentShowProps) {
+export default async function CommentShow({
+  commentId,
+  postId,
+}: CommentShowProps) {
+  const comments = await fetchCommentsByPostId(postId);
   const comment = comments.find((c) => c.id === commentId);
 
   if (!comment) {
@@ -39,11 +43,7 @@ export default function CommentShow({ commentId, comments }: CommentShowProps) {
       <div className="pl-4">
         {children.map((child) => {
           return (
-            <CommentShow
-              key={child.id}
-              commentId={child.id}
-              comments={comments}
-            />
+            <CommentShow key={child.id} commentId={child.id} postId={postId} />
           );
         })}
       </div>
